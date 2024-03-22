@@ -24,12 +24,7 @@ def utf_to_hex(hex_input, conversion_type):
         if conversion_type == "Utf-8":
             hex_result = hex(ord(bytes.fromhex(hex_input).decode('utf-8'))).upper()
         elif conversion_type == "Utf-16":
-            # Split the hex string into bytes
-            bytes_array = bytes.fromhex(hex_input)
-            # Decode bytes as UTF-16
-            utf16_string = bytes_array.decode('utf-16be')
-            # Convert the first character of the decoded string to hex
-            hex_result = hex(ord(utf16_string[0])).upper()
+            hex_result = hex(ord(bytes.fromhex(hex_input).decode('utf-16be'))).upper()
         elif conversion_type == "Utf-32":
             hex_result = hex(ord(bytes.fromhex(hex_input).decode('utf-32be'))).upper()
         
