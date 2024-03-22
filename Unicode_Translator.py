@@ -51,7 +51,7 @@ def validate_hex_input(text, encoding):
 def validate_utf_input(text):
     if text == '':
         return False  # Do not allow empty string
-    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8
+    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 6 and int(text, 16) <= 0x10FFFF
 
 def convert_input():
     result_text = process_input(True)
