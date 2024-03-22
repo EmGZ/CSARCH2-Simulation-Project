@@ -85,11 +85,13 @@ def reset_table():
     history.clear()
     table.delete(*table.get_children())
 
+
 def save_to_file(result_text):
     file_path = "output.txt"
     with open(file_path, "a") as file:  # Open the file in append mode
         file.write(result_text + "\n")   # Append the new result followed by a newline character
     messagebox.showinfo("File Updated", "Result appended to {}".format(file_path))
+    
 history = []
 
 window = tk.Tk()
@@ -108,6 +110,7 @@ entry_input.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky="ew")
 conversion_var = tk.StringVar()
 
 conversion_choices = ["Hex to Utf-8", "Hex to Utf-16", "Hex to Utf-32"]
+
 for i, choice in enumerate(conversion_choices):
     radio_button = tk.Radiobutton(window, text=choice, variable=conversion_var, value=choice)
     radio_button.grid(row=3, column=i, padx=(10, 5), pady=5, sticky="w")
