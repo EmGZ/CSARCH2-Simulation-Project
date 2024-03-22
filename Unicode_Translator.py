@@ -36,13 +36,11 @@ def validate_hex_input(text, encoding):
     hex_value = int(text, 16)
 
     if encoding == 'utf-8':
-        return 0x00 <= hex_value <= 0x7F or 0x80 <= hex_value <= 0x07FF or \
-               0x0800 <= hex_value <= 0xFFFF or 0x10000 <= hex_value <= 0x10FFFF
+        return hex_value <= 0x1FFFFF and all(c.upper() in '0123456789ABCDEF' for c in text)
     elif encoding == 'utf-16':
-        return 0x00 <= hex_value <= 0x7F or 0x80 <= hex_value <= 0x07FF or \
-               0x0800 <= hex_value <= 0xFFFF or 0x10000 <= hex_value <= 0x10FFFF
+        return hex_value <= 0x10FFFF and all(c.upper() in '0123456789ABCDEF' for c in text)
     elif encoding == 'utf-32':
-        return 0x000000 <= hex_value <= 0x10FFFF
+        return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8
     else:
         return False  # Invalid encoding specified
     
