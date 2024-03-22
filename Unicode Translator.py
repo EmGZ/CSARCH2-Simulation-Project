@@ -5,13 +5,13 @@ def hex_to_utf(hex_input, conversion_type):
     try:
         decimal_value = int(hex_input, 16)
         if conversion_type == "Unicode":
-            utf_result = hex(decimal_value)[2:]
+            utf_result = chr(decimal_value)
         elif conversion_type == "Utf-8 to Hex":
-            utf_result = hex(decimal_value)[2:]
+            utf_result = bytes([decimal_value]).decode('utf-8').upper()
         elif conversion_type == "Utf-16 to Hex":
-            utf_result = hex(decimal_value)[2:]
+            utf_result = bytes([decimal_value]).decode('utf-16').upper()
         elif conversion_type == "Utf-32 to Hex":
-            utf_result = hex(decimal_value)[2:]
+            utf_result = bytes([decimal_value]).decode('utf-32').upper()
         return decimal_value, utf_result
     except ValueError:
         return None, None
@@ -20,11 +20,11 @@ def utf_to_hex(utf_input, conversion_type):
     try:
         decimal_value = int(utf_input, 16)
         if conversion_type == "Utf-8 to Hex":
-            hex_result = chr(decimal_value).encode('utf-8').hex()
+            hex_result = chr(decimal_value).encode('utf-8').hex().upper()
         elif conversion_type == "Utf-16 to Hex":
-            hex_result = chr(decimal_value).encode('utf-16').hex()
+            hex_result = chr(decimal_value).encode('utf-16be').hex().upper()
         elif conversion_type == "Utf-32 to Hex":
-            hex_result = chr(decimal_value).encode('utf-32').hex()
+            hex_result = chr(decimal_value).encode('utf-32be').hex().upper()
         return hex_result
     except ValueError:
         return None
@@ -46,7 +46,7 @@ def validate_utf_input(text):
         return False
 
 def process_input():
-    input_value = entry_input.get()
+    input_value = entry_input.get().upper()
     conversion_type = conversion_var.get()
     if conversion_type == "Unicode":
         # Perform Unicode conversion
