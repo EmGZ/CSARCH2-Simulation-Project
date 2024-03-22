@@ -17,19 +17,16 @@ def hex_to_utf(utf_input, conversion_type):
 
 def utf_to_hex(hex_input, conversion_type):
     try:
-        #decimal_value = int(hex_input, 16)
-       
         if conversion_type == "Utf-8 to Hex":
-            #hex_result = decimal_value.to_bytes(4, byteorder='big').hex().upper()  # Convert integer to bytes and then to hexadecimal
-            hex_result = bytes.fromhex(hex_input).decode('utf-8') 
-        # elif conversion_type == "Utf-16 to Hex":
-        #     hex_result = decimal_value.to_bytes(2, byteorder='big').hex().upper()
-        # elif conversion_type == "Utf-32 to Hex":
-        #     hex_result = decimal_value.to_bytes(4, byteorder='big').hex().upper()
+            hex_result = hex(ord(bytes.fromhex(hex_input).decode('utf-8'))).upper()
+        elif conversion_type == "Utf-16 to Hex":
+            hex_result = hex(ord(bytes.fromhex(hex_input).decode('utf-16be'))).upper()
+        elif conversion_type == "Utf-32 to Hex":
+            hex_result = hex(ord(bytes.fromhex(hex_input).decode('utf-32be'))).upper()
+        
         return hex_result
     except ValueError:
         return None
-
 def validate_hex_input(text, encoding):
     if text == '':
         return False  # Do not allow empty string
@@ -42,7 +39,8 @@ def validate_hex_input(text, encoding):
         return 0x00 <= hex_value <= 0x7F or 0x80 <= hex_value <= 0x07FF or \
                0x0800 <= hex_value <= 0xFFFF or 0x10000 <= hex_value <= 0x10FFFF
     elif encoding == 'utf-16':
-        return 0x0000 <= hex_value <= 0xFFFF or 0xD800 <= hex_value <= 0xDFFF
+        return 0x00 <= hex_value <= 0x7F or 0x80 <= hex_value <= 0x07FF or \
+               0x0800 <= hex_value <= 0xFFFF or 0x10000 <= hex_value <= 0x10FFFF
     elif encoding == 'utf-32':
         return 0x000000 <= hex_value <= 0x10FFFF
     else:
@@ -51,7 +49,7 @@ def validate_hex_input(text, encoding):
 def validate_utf_input(text):
     if text == '':
         return False  # Do not allow empty string
-    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 6 and int(text, 16) <= 0x10FFFF
+    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8
 
 def convert_input():
     result_text = process_input(True)
