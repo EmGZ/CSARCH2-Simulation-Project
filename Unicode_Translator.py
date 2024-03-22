@@ -10,30 +10,44 @@ def hex_to_utf(utf_input, conversion_type):
             utf_result = chr(decimal_value).encode('utf-16be').hex().upper()
         elif conversion_type == "Hex to Utf-32":
             utf_result = chr(decimal_value).encode('utf-32be').hex().upper()
+        
         return utf_result
     except ValueError:
         return None
 
 def utf_to_hex(hex_input, conversion_type):
     try:
-        decimal_value = int(hex_input, 16)
+        #decimal_value = int(hex_input, 16)
+       
         if conversion_type == "Utf-8 to Hex":
-            hex_result = bytes([decimal_value]).decode('utf-8').encode('utf-8').hex().upper()
-        elif conversion_type == "Utf-16 to Hex":
-            hex_result = bytes([decimal_value]).decode('utf-16').encode('utf-16').hex().upper()
-        elif conversion_type == "Utf-32 to Hex":
-            hex_result = bytes([decimal_value]).decode('utf-32').encode('utf-32').hex().upper()
+            #hex_result = decimal_value.to_bytes(4, byteorder='big').hex().upper()  # Convert integer to bytes and then to hexadecimal
+            hex_result = bytes.fromhex(hex_input).decode('utf-8') 
+        # elif conversion_type == "Utf-16 to Hex":
+        #     hex_result = decimal_value.to_bytes(2, byteorder='big').hex().upper()
+        # elif conversion_type == "Utf-32 to Hex":
+        #     hex_result = decimal_value.to_bytes(4, byteorder='big').hex().upper()
         return hex_result
     except ValueError:
         return None
 
-def validate_hex_input(text):
+def validate_hex_input(text, encoding):
     if text == '':
         return False  # Do not allow empty string
     if text.startswith('0x') or text.startswith('0X'):
         text = text[2:]
-    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8
+      
+    hex_value = int(text, 16)
 
+    if encoding == 'utf-8':
+        return 0x00 <= hex_value <= 0x7F or 0x80 <= hex_value <= 0x07FF or \
+               0x0800 <= hex_value <= 0xFFFF or 0x10000 <= hex_value <= 0x10FFFF
+    elif encoding == 'utf-16':
+        return 0x0000 <= hex_value <= 0xFFFF or 0xD800 <= hex_value <= 0xDFFF
+    elif encoding == 'utf-32':
+        return 0x000000 <= hex_value <= 0x10FFFF
+    else:
+        return False  # Invalid encoding specified
+    
 def validate_utf_input(text):
     if text == '':
         return False  # Do not allow empty string
@@ -51,11 +65,24 @@ def translate_input():
 
 def process_input(isConvert):
     input_value = entry_input.get().upper()
+  
     if isConvert:
-        if validate_hex_input(input_value):
+        # "Hex to Utf-8", "Hex to Utf-16", "Hex to Utf-32"
+        if conversion_var.get() == "Hex to Utf-8":
+            encoding = 'utf-8'
+        elif conversion_var.get() == "Hex to Utf-16":
+            encoding = 'utf-16'
+        elif conversion_var.get() == "Hex to Utf-32":
+            encoding = 'utf-32'
+        # Convert hexadecimal text to integer
+        if validate_hex_input(input_value, encoding):
             utf_result = hex_to_utf(input_value, conversion_var.get())
-            add_to_history(input_value, utf_result)
-            return utf_result
+            if utf_result is not None:
+                add_to_history(input_value, utf_result)
+                return utf_result
+            else:
+                messagebox.showerror("Error", "can not convert!")
+            
         else:
             messagebox.showerror("Error", "Invalid input! Please enter a valid hexadecimal value.")
     else:
