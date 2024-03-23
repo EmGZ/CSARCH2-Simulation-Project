@@ -54,27 +54,33 @@ def validate_hex_input(text):
         return False  # Do not allow empty string
     if text.startswith('0x') or text.startswith('0X'):
         text = text[2:]
-      
-    hex_value = int(text, 16)
-    if conversion_var == "Utf-8":
-        if  hex_value <= 0x10FFFF and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8:
-            return True
+    if all(c.upper() in '0123456789ABCDEF' for c in text):
+        hex_value = int(text, 16)   
+    else:
         return False
-    elif conversion_var == "Utf-16":
-        if  check_utf16_format(hex_value) and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8:
-            return True
-        return False
-    elif conversion_var == "Utf-32":
-        if  hex_value <= 0x10FFFF and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8:
-            return True
-        return False
+    if  hex_value <= 0x10FFFF and len(text) <= 8:
+        return True
     else:
         return False  # Invalid encoding specified
     
 def validate_utf_input(text):
     if text == '':
         return False  # Do not allow empty string
-    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8
+    if conversion_var.get() == "Utf-8":
+        if  all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8:
+            return True
+        return False
+    elif conversion_var.get() == "Utf-16":
+        if  check_utf16_format(text) and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8:
+            return True
+        return False
+    elif conversion_var.get() == "Utf-32":
+        if  all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8:
+            return True
+        return False
+    else:
+        return False
+    
 
 def convert_input(inputtype):
     result_text = process_input(inputtype)
