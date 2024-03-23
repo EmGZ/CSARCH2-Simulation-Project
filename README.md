@@ -1,4 +1,7 @@
 # CSARCH2-Simulation-Project
+---
+This project is a python program that could convert unicode to UTFS and vice-versa
+---
 ### BY:
 - CABUNGCAL, MARY JOSELLE
 - DIAZ, RAFAEL INIGO
