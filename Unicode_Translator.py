@@ -1,6 +1,7 @@
 import tkinter as tk
 import textwrap as tw
 from tkinter import ttk, filedialog, messagebox
+import re
 
 def hex_to_utf(utf_input):
     try:
@@ -36,23 +37,44 @@ def utf_to_hex(hex_input, conversion_type):
         return hex_result
     except ValueError:
         return None
+    
+def check_utf16_format(input_string):
+    # Define the regular expression pattern
+    pattern = re.compile(r'^D[0-9A-Fa-f]{3}D[0-9A-Fa-f]{3}$')
+
+    # Check if the input string matches the pattern
+    if pattern.match(input_string):
+        return True
+    else:
+        return False
+
 def validate_hex_input(text):
+    
     if text == '':
         return False  # Do not allow empty string
     if text.startswith('0x') or text.startswith('0X'):
         text = text[2:]
       
     hex_value = int(text, 16)
-
-    if hex_value <= 0x1FFFFF and all(c.upper() in '0123456789ABCDEF' for c in text) and hex_value <= 0x10FFFF and all(c.upper() in '0123456789ABCDEF' for c in text) and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8:
-        return True
+    if conversion_var == "Utf-8":
+        if  hex_value <= 0x10FFFF and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8:
+            return True
+        return False
+    elif conversion_var == "Utf-16":
+        if  check_utf16_format(hex_value) and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8:
+            return True
+        return False
+    elif conversion_var == "Utf-32":
+        if  hex_value <= 0x10FFFF and all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8:
+            return True
+        return False
     else:
         return False  # Invalid encoding specified
     
 def validate_utf_input(text):
     if text == '':
         return False  # Do not allow empty string
-    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) <= 8
+    return all(c.upper() in '0123456789ABCDEF' for c in text) and len(text) == 8
 
 def convert_input(inputtype):
     result_text = process_input(inputtype)
@@ -150,13 +172,11 @@ entry_input.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky="ew")
 label_group = tk.Label(window, text="Input Type", font=("Helvetica", 10))
 label_group.grid(row=3, column=0, columnspan=4, padx=5, pady=5, sticky="nsew")
 
-# Radio buttons for conversion type selection
 conversion_var = tk.StringVar()
 
 radio_button = tk.Radiobutton(window, text="Hex", variable=conversion_var, value="Hex")
 radio_button.grid(row=4, column=0, columnspan=4, padx=5, pady=5, sticky="nsew")
 
-# Radio buttons for translation type selection
 translation_var = tk.StringVar()
 
 translation_choices = ["Utf-8", "Utf-16", "Utf-32"]

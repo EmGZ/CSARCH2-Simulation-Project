@@ -1,16 +1,20 @@
-def utf8_hex_to_normal_hex(utf8_hex):
-    # Convert UTF-8 encoded hexadecimal string to bytes
-    utf8_bytes = bytes.fromhex(utf8_hex)
+import re
 
-    # Decode bytes as UTF-8
-    utf8_string = utf8_bytes.decode('utf-8')
+def check_format(input_string):
+    # Define the regular expression pattern
+    pattern = re.compile(r'^D[0-9A-Fa-f]{3}D[0-9A-Fa-f]{3}$')
 
-    # Convert UTF-8 string to hexadecimal representation
-    #normal_hex = utf8_string.encode('utf-8').hex()
-    normal_hex = utf8_string.hex()
-    return normal_hex.upper()
+    # Check if the input string matches the pattern
+    if pattern.match(input_string):
+        return True
+    else:
+        return False
 
 # Test the function
-utf8_hex_input = "F48CABBE"
-normal_hex_output = utf8_hex_to_normal_hex(utf8_hex_input)
-print(normal_hex_output)  # Output: 10CAFE
+test_string1 = "D123D45d"
+test_string2 = "DABCD456"
+test_string3 = "D123DXYZ"
+
+print(check_format(test_string1))  # Output: True
+print(check_format(test_string2))  # Output: False
+print(check_format(test_string3))  # Output: False
